@@ -7,11 +7,27 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <style>
         *{box-sizing:border-box;}
+        h1{
+            text-align:center;
+            margin:50px 0;
+        }
+        .row{
+            width:1300px;
+            margin:0 auto;
+        }
+        .col-sm-6{
+            padding:0;
+            width:600px;
+        }
+        .col-sm-6:first-child{
+            margin-right:100px;
+        }
         .card{
-            height:100px;
+            width:150px;
+            height:150px;
             border:1px solid #888;
             text-align:center;
-            line-height:100px;
+            line-height:150px;
         }
         .card-name{
             background-color:white;
@@ -25,72 +41,97 @@
     <script>
     $(document).ready(function(){
         var i=0;
-        $(".card-color").each(function(){
-            var bgcolor=$(this).attr("data-color");
-            $(this).css({"background-color":bgcolor});
-        });
+        var arr=["red","green","blue","yellow","orange","pink","black","plum","darkorange","DarkSalmon","FireBrick","GreenYellow","LightBlue","LightSeaGreen","LightSkyBlue","PaleGreen"];
         
-        $(".card-name").draggable({
-            cursor:"pointer",
-            revert:true,
-            start:function(event,ui){
-                $(".card-name").css({"z-index":1});
-                $(this).css({"z-index":999});
+        randomsort();
+        sethtml(arr,"card-name");
+        sethtml(arr,"card-color");
+        setcolor();
+        drag();
+        
+        function randomsort(){
+            var len=arr.length;
+            arr.sort(function(){
+                return parseInt(Math.random()*len);
+            });
+        };
+        
+        function sethtml(arr,row){
+            randomsort();
+            var div="";
+            for(c=0;c<16;c++){
+                div+="<div class='card "+row+" col-sm-3' data-color='"+arr[c].toLowerCase()+"'>";
+                if(row=="card-name"){
+                    div+=arr[c].toUpperCase();
+                }
+                div+="</div>";
             }
-        });
+            $("."+row+"s").html(div);
+        };
         
-        $(".card-color").droppable({
-            drop:function(event,ui){
-                var tColor=$(this).attr("data-color");
-                var oColor=$(ui.draggable).attr("data-color");
-                var cOffset=$(this).offset();
-                console.log(tColor,oColor);
-                if(tColor===oColor){
-                    $(ui.draggable).draggable("option","revert",false);
-                    $(ui.draggable).draggable("disable");
-                    $(ui.draggable).offset({"top":cOffset.top,"left":cOffset.left});
-                    i++;
-                    console.log(i);
-                    if(i==8){
-                        alert("축하합니다");
-                        $(".card-name").removeAttr("style");
-                        $(".card-name").draggable("enable");
-                        $(".card-name").draggable("option","revert",true);
-                        i=0;
+        function setcolor(){
+            $(".card-color").each(function(){
+                var bgcolor=$(this).attr("data-color");
+                $(this).css({"background-color":bgcolor});
+            });
+        };
+        
+        function drag(){
+            $(".card-name").draggable({
+                cursor:"pointer",
+                revert:true,
+                start:function(event,ui){
+                    $(".card-name").css({"z-index":1});
+                    $(this).css({"z-index":999});
+                    drop();
+                }
+            });
+        };
+        
+        function drop(){
+            $(".card-color").droppable({
+                drop:function(event,ui){
+                    var tColor=$(this).attr("data-color");
+                    var oColor=$(ui.draggable).attr("data-color");
+                    var cOffset=$(this).offset();
+                    if(tColor===oColor){
+                        $(ui.draggable).draggable("option","revert",false);
+                        $(ui.draggable).draggable("disable");
+                        $(ui.draggable).offset({"top":cOffset.top,"left":cOffset.left});
+                        i++;
+                        if(i==16){
+                            i=0;
+                            alert("축하합니다");
+                            $(".card-name").draggable("enable");
+                            $(".card-name").draggable("option","revert",true);
+                            sethtml(arr,"card-name");
+                            sethtml(arr,"card-color");
+                            setcolor();
+                            drag();
+                        }
                     }
                 }
-            }
-        });
+            });
+        };
     });
     </script>
 </head>
 <body>
     <div class="container-fluid">
+        <h1>drag &amp; drop</h1>
         <div class="row">
-            <div class="col-sm-6">
-                <div class="card card-name col-sm-3" data-color="red">RED</div>
-                <div class="card card-name col-sm-3" data-color="green">GREEN</div>
-                <div class="card card-name col-sm-3" data-color="blue">BLUE</div>
-                <div class="card card-name col-sm-3" data-color="yellow">YELLOW</div>
-                <div class="card card-name col-sm-3" data-color="orange">ORANGE</div>
-                <div class="card card-name col-sm-3" data-color="pink">PINK</div>
-                <div class="card card-name col-sm-3" data-color="black">BLACK</div>
-                <div class="card card-name col-sm-3" data-color="skyblue">SKYBLUE</div>
+            <div class="col-sm-6 card-names">
+                
             </div>
-            <div class="col-sm-6">
-                <div class="card card-color col-sm-3" data-color="red"></div>
-                <div class="card card-color col-sm-3" data-color="green"></div>
-                <div class="card card-color col-sm-3" data-color="blue"></div>
-                <div class="card card-color col-sm-3" data-color="yellow"></div>
-                <div class="card card-color col-sm-3" data-color="orange"></div>
-                <div class="card card-color col-sm-3" data-color="pink"></div>
-                <div class="card card-color col-sm-3" data-color="black"></div>
-                <div class="card card-color col-sm-3" data-color="skyblue"></div>
+            <div class="col-sm-6 card-colors">
+                
             </div>
         </div>
         <p></p>
     </div>
+<!--
     <script src="http://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+-->
 </body>
 </html>

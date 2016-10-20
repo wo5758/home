@@ -16,3 +16,11 @@ $member["userlogin"] = false;
 if(isset($_SESSION["userid"])) $member["userid"] = $_SESSION["userid"];
 if(isset($_SESSION["username"])) $member["username"] = $_SESSION["username"];
 if(isset($_SESSION["userlogin"])) $member["userlogin"] = $_SESSION["userlogin"];
+
+try{
+    $db = new PDO("mysql:host=localhost;dbname=home;charset=utf8","root","");
+}
+catch(PDOException $e){
+//    echo "DB 연결 에러".$e->getMessage();
+    header("Location: /home/app/template/404.php");
+}
